@@ -6,6 +6,7 @@ import 'package:bridgebank_social_app/configuration/colors.dart';
 import 'package:bridgebank_social_app/ui/screens/main/contacts/contacts_screen.dart';
 import 'package:bridgebank_social_app/ui/screens/main/pages/groups_page.dart';
 import 'package:bridgebank_social_app/ui/screens/main/pages/messages_page.dart';
+import 'package:bridgebank_social_app/ui/screens/main/profile/profile_screen.dart';
 import 'package:bridgebank_social_app/ui/widgets/dialogs.dart';
 import 'package:bridgebank_social_app/ui/widgets/progress_ui.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +59,14 @@ class _MainScreenState extends State<MainScreen> {
               title: Text(widget.title),
               actions: [
 
+                IconButton(onPressed: (){
+
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                   const ProfileScreen()
+                  ));
+
+                }, icon: const Icon(Icons.person)),
+
                 IconButton(
                     onPressed: (){
 
@@ -98,19 +107,19 @@ class _MainScreenState extends State<MainScreen> {
               onPressed: (){
 
                 Navigator.push(context, MaterialPageRoute(
-                    builder: (context)=> ContactsScreen(),
+                    builder: (context)=> const ContactsScreen(),
 
                 ));
               },
               child: Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.secondary,
 
                 ),
-                child: Icon(Icons.add, color: Colors.white,),
+                child: const Icon(Icons.add, color: Colors.white,),
               ),
             ),
             body: const TabBarView(
