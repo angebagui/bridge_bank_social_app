@@ -3,6 +3,8 @@ import 'package:bridgebank_social_app/configuration/constants.dart';
 import 'package:bridgebank_social_app/data/models/conversation.dart';
 import 'package:bridgebank_social_app/data/models/message.dart';
 import 'package:bridgebank_social_app/data/models/user.dart';
+import 'package:bridgebank_social_app/main.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:intl/intl.dart';
@@ -34,6 +36,24 @@ class _ConversationScreenState extends State<ConversationScreen> {
     _messages = _conversation.messages;
     _openConversation();
     super.initState();
+
+    //Foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Got a message whilst in the foreground!');
+      print('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        print('Message also contained a notification: ${message.notification}');
+          flutterLocalNotificationsPlugin.cancel(message.messageId.hashCode);
+
+          if(_conversation.id != null){
+            _loadMessagesByConversation(_conversation.id!);
+          }
+
+
+      }
+
+    });
 
   }
 

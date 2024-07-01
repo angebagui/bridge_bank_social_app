@@ -9,6 +9,7 @@ import 'package:bridgebank_social_app/data/models/user.dart';
 import 'package:bridgebank_social_app/data/storage/local_storage_service.dart';
 import 'package:bridgebank_social_app/rest/backend_service.dart';
 import 'package:bridgebank_social_app/rest/exception/auth/auth_exception.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
 
 class BackendRestService extends BackendService{
@@ -497,6 +498,20 @@ class BackendRestService extends BackendService{
     } else {
       throw Exception('Server error: ${response.body}');
     }
+  }
+
+  @override
+  Future<bool> storeDevice({
+    required String firebaseId,
+    String? deviceOS,
+    String? deviceOSVersion,
+    String? deviceBrand,
+    String? deviceBrandModel,
+    double? deviceWidth,
+    double?deviceHeight}) {
+    // TODO: implement storeDevice
+    throw UnimplementedError();
+
   }
 
 

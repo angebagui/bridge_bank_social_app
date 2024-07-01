@@ -1,9 +1,13 @@
 import 'package:bridgebank_social_app/configuration/token_manager.dart';
+import 'package:bridgebank_social_app/data/database/database_helper.dart';
 import 'package:bridgebank_social_app/data/models/session.dart';
+import 'package:bridgebank_social_app/data/storage/database_source.dart';
 import 'package:bridgebank_social_app/data/storage/local_storage_service.dart';
 import 'package:bridgebank_social_app/data/storage/shared_prefs.dart';
 import 'package:bridgebank_social_app/rest/backend_rest_service.dart';
 import 'package:bridgebank_social_app/rest/backend_service.dart';
+import 'package:bridgebank_social_app/rest/upload/imgur/imgur_service.dart';
+import 'package:bridgebank_social_app/rest/upload/upload_image_service.dart';
 import 'package:bridgebank_social_app/ui/screens/auth/login_screen.dart';
 import 'package:bridgebank_social_app/ui/screens/main/main_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,6 +21,7 @@ class AppSetup{
 
   static late BackendService backendService;
   static late LocalStorageService localStorageService;
+  static late UploadImageService uploadImageService;
 
   static Session? me;
 
@@ -24,7 +29,13 @@ class AppSetup{
 
     backendService = BackendRestService();
     final SharedPreferences preferences = await SharedPreferences.getInstance();
-    localStorageService =  SharedPrefs(preferences);
+
+    // Open Database
+    //await DatabaseHelper.connection();
+   // localStorageService = await DatabaseSource.getInstance();
+     localStorageService = SharedPrefs(preferences);
+    uploadImageService = ImgurService();
+
     me = localStorageService.connectedUser();
 
     print("AppSetup init()");

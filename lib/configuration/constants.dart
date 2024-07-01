@@ -11,4 +11,7 @@ class Constants{
 
   /// Font family
   static String defaultFontFamily = 'Poppins';
+
+  static String databaseName = "bridge_bank_social_app.db";
+  static int databaseVersion = 1;
 }

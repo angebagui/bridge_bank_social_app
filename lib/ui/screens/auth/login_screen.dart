@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bridgebank_social_app/app_setup.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:bridgebank_social_app/configuration/colors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -29,7 +31,49 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController(text: "123456789");
 
   bool _isLoading = false;
-  
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Timer.run((){
+      notificationInit();
+      getToken();
+    });
+  }
+
+  void getToken(){
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+// use the returned token to send messages to users from your custom server
+    messaging.getToken()
+    .then((String? token){
+
+      print("FirebaseID =>>> $token");
+
+    });
+
+
+
+  }
+
+  void notificationInit()async{
+
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('User granted permission: ${settings.authorizationStatus}');
+  }
 
   void _showProgress(){
     _isLoading = true;

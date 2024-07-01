@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "149640112489",
+    "project_id": "avid-involution-373812",
+    "storage_bucket": "avid-involution-373812.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149640112489:android:9256f38d3dc2e9274575f8",
+        "android_client_info": {
+          "package_name": "ci.angebagui.bridgebank_s"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBT75k7A7Lps8U-gRc9an7VriYWwMXU2kM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:149640112489:android:75f6f3793722aafe4575f8",
+        "android_client_info": {
+          "package_name": "ci.angebagui.bridgebank_social_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBT75k7A7Lps8U-gRc9an7VriYWwMXU2kM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
