@@ -28,7 +28,6 @@ class _MessagesPageState extends State<MessagesPage> {
     ProgressUtils.init();
     super.initState();
 
-
     Provider
         .of<ConversationsProvider>(context, listen: false)
         .loadData(context);
