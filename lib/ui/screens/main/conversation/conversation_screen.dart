@@ -44,7 +44,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
       if (message.notification != null) {
         print('Message also contained a notification: ${message.notification}');
-          flutterLocalNotificationsPlugin.cancel(message.messageId.hashCode);
+          //flutterLocalNotificationsPlugin.cancel(message.messageId.hashCode);
 
           if(_conversation.id != null){
             _loadMessagesByConversation(_conversation.id!);

@@ -47,6 +47,8 @@ dependencies:
   sqflite: ^2.3.3+1
   path: ^1.9.0
   flutter_local_notifications: ^17.2.1
+  flutter_bloc: ^8.1.6
+  provider: ^6.1.2
 
 
 dev_dependencies:

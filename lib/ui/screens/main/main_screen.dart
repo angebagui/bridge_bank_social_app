@@ -6,10 +6,12 @@ import 'package:bridgebank_social_app/configuration/colors.dart';
 import 'package:bridgebank_social_app/ui/screens/main/contacts/contacts_screen.dart';
 import 'package:bridgebank_social_app/ui/screens/main/pages/groups_page.dart';
 import 'package:bridgebank_social_app/ui/screens/main/pages/messages_page.dart';
+import 'package:bridgebank_social_app/ui/screens/main/profile/cubit/upload_image_cubit.dart';
 import 'package:bridgebank_social_app/ui/screens/main/profile/profile_screen.dart';
 import 'package:bridgebank_social_app/ui/widgets/dialogs.dart';
 import 'package:bridgebank_social_app/ui/widgets/progress_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainScreen extends StatefulWidget {
   final String title;
@@ -61,9 +63,21 @@ class _MainScreenState extends State<MainScreen> {
 
                 IconButton(onPressed: (){
 
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                   const ProfileScreen()
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (_)=>
+                      BlocProvider(
+                          create: (_)=>UploadImageCubit(uploadImageService:
+                          AppSetup.uploadImageService),
+                        child: const ProfileScreen(),
+                      ),
                   ));
+            /*      Navigator.push(context, MaterialPageRoute(
+                      builder: (_)=>
+                   BlocProvider.value(
+                     value: context.read<UploadImageCubit>(),
+                     child: const ProfileScreen(),
+                   )
+                  ));*/
 
                 }, icon: const Icon(Icons.person)),
 

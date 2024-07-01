@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:bridgebank_social_app/app_setup.dart';
 import 'package:bridgebank_social_app/configuration/colors.dart';
+import 'package:bridgebank_social_app/ui/screens/main/profile/cubit/upload_image_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -15,8 +17,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   //String? photoUrl = "https://images.unsplash.com/photo-1719066373323-c3712474b2a4?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-  String? photoUrl;
-  bool _isUploadingImage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,24 +24,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: const Text("Mon compte"),
       ),
-      body:  SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 20),
-            _isUploadingImage ? Center(
-              child: _buildUploadingUi(),
-            ) : Center(
-              child: photoUrl == null?
-              _buildAddPhotoUi()
-                  : _buildUploadedPhotoUi(),
+
+            Center(
+              child:  BlocBuilder<UploadImageCubit, UploadImageState>(
+                  builder: (contxt, state){
+                    if(state is NotUploadedImageState){
+                      return _buildAddPhotoUi(context);
+                    }
+
+                    if(state is UploadedImageState){
+                      return _buildUploadedPhotoUi(
+                          context,
+                          state.url
+                      );
+                    }
+
+                    if(state is ProgressBarState){
+                      return _buildUploadingUi();
+                    }
+
+                    if(state is UploadErrorState){
+                      return Text("Error ${state.exception}");
+                    }
+                    return _buildAddPhotoUi(contxt);
+                  }
+              ),
             )
+
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAddPhotoUi() {
+  Widget _buildAddPhotoUi(BuildContext contxt) {
     return Container(
         width: 140,
         height: 140,
@@ -50,14 +70,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           shape: BoxShape.circle,
         ),
         child:  IconButton(
-          onPressed: _addPicture,
+          onPressed: (){
+            _addPicture(contxt);
+          },
           icon:const Icon(Icons.add_a_photo,
             color: Colors.white,size: 60,),
         )
     );
   }
 
-  Widget _buildUploadedPhotoUi() {
+  Widget _buildUploadedPhotoUi(BuildContext contxt, String photoUrl) {
+
     return Container(
       width: 140,
       height: 140,
@@ -71,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image:NetworkImage(
-                      photoUrl!
+                      photoUrl
                   ),
                 )
             ),
@@ -80,7 +103,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Align(
             alignment: Alignment.topRight,
             child: IconButton(
-                onPressed:_addPicture,
+                onPressed:(){
+                  _addPicture(contxt);
+                },
                 icon: const Icon(
                   Icons.edit,
                   color: AppColors.secondary,
@@ -107,10 +132,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _addPicture(){
+  void _addPicture(BuildContext contxt){
 
     //Take picture from Camera
-    _takePicture();
+    _takePicture(contxt);
 
     //Pick picture from gallery
     // _pickPicture();
@@ -120,7 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   //Take picture from Camera
-  void _takePicture() {
+  void _takePicture(BuildContext contxt) {
 
 
     final ImagePicker imagePicker = ImagePicker();
@@ -128,7 +153,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .then((XFile? image){
       print("image ==>> ${image?.path}");
       if(image != null){
-        _uploadImage(image);
+        contxt.read<UploadImageCubit>()
+            .sendImageFile(File(image.path));
       }
 
     })
@@ -140,13 +166,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   /**
    * Pick picture from gallery
    */
-  void _pickPicture() {
+  void _pickPicture(BuildContext contxt) {
     final ImagePicker imagePicker = ImagePicker();
     imagePicker.pickImage(source: ImageSource.gallery)
         .then((XFile? image){
       print("image ==>> ${image?.path}");
       if(image != null){
-        _uploadImage(image);
+        contxt.read<UploadImageCubit>()
+            .sendImageFile(File(image.path));
       }
     })
         .catchError((error){
@@ -155,26 +182,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   }
 
-  _uploadImage(XFile file) {
-    if (mounted) {
-      setState(() {
-        _isUploadingImage = true;
-      });
-    }
-    print("Upload image");
-    AppSetup.uploadImageService.uploadImage(File(file.path)).then((String url) {
-      print("Response =>> $url");
-      setState(() {
-        photoUrl = url;
-        _isUploadingImage = false;
-      });
-    }).catchError((error) {
-      if (mounted) {
-        setState(() {
-          _isUploadingImage = false;
-        });
-      }
-      print("uploadImage() error => $error");
-    });
-  }
+
 }
