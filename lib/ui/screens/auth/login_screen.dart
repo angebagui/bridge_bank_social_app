@@ -41,6 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
       notificationInit();
       getToken();
     });
+
   }
 
   void getToken(){
@@ -223,7 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         AppSetup.toastLongSuccess("Connexion réussie !");
 
-        final newRoute = MaterialPageRoute(builder: (context)=> AppSetup.start());
+        final newRoute = MaterialPageRoute(builder: (_)=> AppSetup.start());
         Navigator.pushAndRemoveUntil(context, newRoute, (_) => false);
 
       });

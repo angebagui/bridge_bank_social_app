@@ -269,7 +269,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
         AppSetup.toastLongSuccess("Inscription réussie !");
 
-        final newRoute = MaterialPageRoute(builder: (context)=> AppSetup.start());
+        final newRoute = MaterialPageRoute(builder: (_)=> AppSetup.start());
         Navigator.pushAndRemoveUntil(context, newRoute, (_) => false);
 
       });

@@ -4,10 +4,12 @@ import 'package:bridgebank_social_app/data/models/conversation.dart';
 import 'package:bridgebank_social_app/data/models/message.dart';
 import 'package:bridgebank_social_app/data/models/user.dart';
 import 'package:bridgebank_social_app/main.dart';
+import 'package:bridgebank_social_app/providers/messages_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ConversationScreen extends StatefulWidget {
 
@@ -27,15 +29,35 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   late Conversation _conversation;
 
-  List<Message> _messages = [];
-
   @override
   void initState() {
     //Implement initState
     _conversation = widget.conversation;
-    _messages = _conversation.messages;
-    _openConversation();
     super.initState();
+
+    final MessagesProvider messagesProvider = Provider
+        .of<MessagesProvider>(context, listen: false);
+
+    messagesProvider
+    .addListener((){
+      if(Provider.of<MessagesProvider>(context, listen: false)
+          .conversation != null){
+        _conversation = Provider
+            .of<MessagesProvider>(context, listen: false)
+            .conversation!;
+      }
+
+
+    });
+
+    Provider.of<MessagesProvider>(context, listen: false)
+        .setConversation(_conversation);
+
+    Provider.of<MessagesProvider>(context, listen: false)
+    .setMessages(_conversation.messages);
+
+    Provider.of<MessagesProvider>(context, listen: false)
+        .openConversation(widget.conversation.speakers);
 
     //Foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -47,7 +69,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
           //flutterLocalNotificationsPlugin.cancel(message.messageId.hashCode);
 
           if(_conversation.id != null){
-            _loadMessagesByConversation(_conversation.id!);
+            Provider.of<MessagesProvider>(context, listen:false)
+                .loadMessagesByConversation(_conversation.id!);
           }
 
 
@@ -126,11 +149,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
   Widget _buildMessagesUi(){
-    return Column(
-      children: _messages.map<Widget>((message)=>
-      message.senderId == AppSetup.localStorageService.connectedUser()!.user!.id?
-      _buildSenderUi(message):_buildReceiverUi(message)
-      ).toList()
+    return Consumer<MessagesProvider>(
+      builder: (ctxt, messagesProvider, _){
+        return Column(
+            children: messagesProvider.messages.map<Widget>((message)=>
+            message.senderId == AppSetup.localStorageService.connectedUser()!.user!.id?
+            _buildSenderUi(message):_buildReceiverUi(message)
+            ).toList()
+        );
+      },
     );
   }
 
@@ -275,27 +302,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-  void _openConversation() {
 
-    AppSetup.backendService.openConversation(
-        speakers: widget.conversation.speakers)
-    .then((Conversation conversation){
-
-      print("_openConversation() then =>> $conversation");
-      _conversation = conversation;
-      _messages = conversation.messages;
-      if(mounted){
-        setState(() {
-
-        });
-      }
-
-    })
-    .catchError((error){
-      print("ConversationScreen._openConversation() =>>> Error $error");
-
-    });
-  }
 
   void _submitMessage(User user, Conversation conversation) {
 
@@ -316,16 +323,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
     .then((Message message){
       _messageController.clear();
 
-      _messages.add(message);
+      Provider.of<MessagesProvider>(context,listen: false)
+          .addMessage(message);
 
-      //_messages.sort((a,b)=>a.createdAt!.compareTo(b.createdAt!));
-
-
-      setState(() {
-
-      });
-
-      _loadMessagesByConversation(_conversation.id!);
+      Provider.of<MessagesProvider>(context, listen: false)
+          .loadMessagesByConversation(_conversation.id!);
 
 
     }).catchError((error){
@@ -335,21 +337,5 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   }
 
-  void _loadMessagesByConversation(int conversationId) {
 
-    print("_loadMessagesByConversation()");
-
-    AppSetup.backendService.loadMessagesByConversationID(conversationId: conversationId)
-        .then((List<Message> messages){
-          _messages = messages;
-          if(mounted){
-            setState(() {
-
-            });
-          }
-    }).catchError((error){
-      print("ConversationScreen._loadMessagesByConversation() ==>>> Error $error");
-    });
-
-  }
 }

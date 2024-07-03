@@ -6,11 +6,9 @@ import 'package:bridgebank_social_app/configuration/constants.dart';
 import 'package:bridgebank_social_app/configuration/theme.dart';
 import 'package:bridgebank_social_app/configuration/token_manager.dart';
 import 'package:bridgebank_social_app/providers/conversations_provider.dart';
-import 'package:bridgebank_social_app/ui/screens/main/profile/cubit/upload_image_cubit.dart';
-import 'package:bridgebank_social_app/ui/screens/main/profile/profile_screen.dart';
+import 'package:bridgebank_social_app/providers/messages_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -57,7 +55,7 @@ showNotification(RemoteMessage message){
       message.messageId.hashCode,
       message.notification!.title,
       message.notification!.body,
-      NotificationDetails(
+      const NotificationDetails(
           android: AndroidNotificationDetails(
               "channelId",
               'channelName'
@@ -252,7 +250,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
                     ConversationsProvider(
                     AppSetup.backendService,
                     AppSetup.localStorageService
-                ))
+                )),
+
+                ChangeNotifierProvider(create: (_)=>
+                    MessagesProvider(
+                        backendService:AppSetup.backendService,
+                        localStorageService:AppSetup.localStorageService
+                    )),
+
+
               ],
               child: TokenManager.isExpired()?
               AppSetup.start():
