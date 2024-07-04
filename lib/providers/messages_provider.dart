@@ -19,9 +19,12 @@ class MessagesProvider extends ChangeNotifier{
   Conversation? _conversation;
 
   Conversation? get conversation => _conversation;
-  void setConversation(Conversation conversation){
+  void setConversation(Conversation conversation, {bool isNotify = false}){
     _conversation = conversation;
-    notifyListeners();
+    if(isNotify){
+      notifyListeners();
+    }
+
   }
 
   List<Message> _messages = [];
@@ -33,9 +36,12 @@ class MessagesProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void setMessages(List<Message> list){
+  void setMessages(List<Message> list, {bool isNotify = false}){
     _messages = list;
-    notifyListeners();
+    if(isNotify){
+      notifyListeners();
+    }
+
   }
 
   void openConversation(List<int> speakers) {

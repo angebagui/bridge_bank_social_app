@@ -8,8 +8,12 @@ import 'package:intl/intl.dart' as intl;
 class ConversationItemWidget extends StatelessWidget {
 
   final Conversation conversation;
+  final User connectedUser;
   final Function () onTap;
-  const ConversationItemWidget({super.key, required this.conversation, required this.onTap});
+  const ConversationItemWidget({super.key,
+    required this.conversation,
+    required this.connectedUser,
+    required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +52,7 @@ class ConversationItemWidget extends StatelessWidget {
           )
         ],
       ),
-      title: Text(conversation.senderName(User())/*TODO Update User*/, style: const TextStyle(
+      title: Text(conversation.senderName(connectedUser)/*TODO Update User*/, style: const TextStyle(
           fontWeight: FontWeight.bold
       ),),
       subtitle: Text(conversation.messageContent()),

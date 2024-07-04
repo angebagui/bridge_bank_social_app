@@ -224,61 +224,47 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver{
   }
   @override
   Widget build(BuildContext context) {
-    return FlutterSizer(
-      builder: (contxt, orientation, screenType){
-        return Listener(
-          onPointerDown: (event){
-            print("$event");
-            if(TokenManager.isExpired()){
-              if(mounted){
-                setState(() {
-                });
-              }
-            }else{
-              TokenManager.refresh();
-            }
+    return MultiProvider(
+      providers: [
 
-          },
-          child: MaterialApp(
+        ChangeNotifierProvider(
+            create: (_) => ConversationsProvider(
+                AppSetup.backendService,
+                AppSetup.localStorageService
+            )),
+
+        ChangeNotifierProvider(
+            create: (_) => MessagesProvider(
+                backendService:AppSetup.backendService,
+                localStorageService:AppSetup.localStorageService
+            ))
+
+      ],
+        child: FlutterSizer(
+        builder: (context, orientation, screenType){
+          return Listener(
+            onPointerDown: (event){
+              print("$event");
+              if(TokenManager.isExpired()){
+                if(mounted){
+                  setState(() {
+                  });
+                }
+              }else{
+                TokenManager.refresh();
+              }
+
+            },
+            child: MaterialApp(
               title: 'Flutter Demo',
               theme: AppTheme.light(),
-              //home: MainScreen(title: "BB Social",)
-
-            home: MultiProvider(
-              providers: [
-                ChangeNotifierProvider(create: (_)=>
-                    ConversationsProvider(
-                    AppSetup.backendService,
-                    AppSetup.localStorageService
-                )),
-
-                ChangeNotifierProvider(create: (_)=>
-                    MessagesProvider(
-                        backendService:AppSetup.backendService,
-                        localStorageService:AppSetup.localStorageService
-                    )),
-
-
-              ],
-              child: TokenManager.isExpired()?
-              AppSetup.start():
-              _homeScreen,
+              home: TokenManager.isExpired()?
+            AppSetup.start():
+            _homeScreen,
             ),
-/*              home: MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                      create: (_)=> UploadImageCubit(uploadImageService:
-                      AppSetup.uploadImageService),
-                  )
-                ],
-                child: TokenManager.isExpired()?
-                AppSetup.start():
-                _homeScreen,
-              ),*/
-            //home: const RegisterScreen(),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

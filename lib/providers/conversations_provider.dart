@@ -5,7 +5,9 @@ import 'package:bridgebank_social_app/data/models/conversation.dart';
 import 'package:bridgebank_social_app/data/storage/local_storage_service.dart';
 import 'package:bridgebank_social_app/rest/backend_service.dart';
 import 'package:bridgebank_social_app/rest/exception/auth/auth_exception.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart';
 
 class ConversationsProvider extends ChangeNotifier{
@@ -32,8 +34,7 @@ class ConversationsProvider extends ChangeNotifier{
     //Show Loading()
     isLoading = true;
     //Load Conversations
-    backendService.loadMyConversations(meId:
-    storageService
+    backendService.loadMyConversations(meId: storageService
         .connectedUser()
         ?.user
         ?.id

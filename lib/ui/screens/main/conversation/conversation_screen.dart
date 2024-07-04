@@ -4,6 +4,7 @@ import 'package:bridgebank_social_app/data/models/conversation.dart';
 import 'package:bridgebank_social_app/data/models/message.dart';
 import 'package:bridgebank_social_app/data/models/user.dart';
 import 'package:bridgebank_social_app/main.dart';
+import 'package:bridgebank_social_app/providers/conversations_provider.dart';
 import 'package:bridgebank_social_app/providers/messages_provider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -328,6 +329,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
       Provider.of<MessagesProvider>(context, listen: false)
           .loadMessagesByConversation(_conversation.id!);
+
+      Provider.of<ConversationsProvider>(context, listen: false)
+          .loadData(context);
 
 
     }).catchError((error){
